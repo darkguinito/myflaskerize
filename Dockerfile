@@ -1,6 +1,8 @@
 # pull official base image
 FROM python:3.8.1-slim-buster as builder
 
+ENV HTTP_PROXY=http://10.35.255.65:8080
+ENV HTTPS_PROXY=http://10.35.255.65:10443
 # set work directory
 WORKDIR /usr/src
 
