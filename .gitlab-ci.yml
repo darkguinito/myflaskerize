@@ -6,14 +6,14 @@ stages:
 
 
 build:
-  image: gitlab/dind:latest
+  image: docker:stable
   stage: package
   before_script:
     - export
     - mkdir -p $HOME/.docker/
     - 'echo "{ \"proxies\": { \"default\": { \"httpProxy\": \"$HTTP_PROXY\", \"httpsProxy\": \"$HTTPS_PROXY\", \"noProxy\": \"$NO_PROXY\" } } }" > $HOME/.docker/config.json'
   script:
-    - docker build --build-arg HTTP_PROXY=$HTTP_PROXY --build-arg HTTPS_PROXY=$HTTP_PROXY --build-arg NO_PROXY=$NO_PROXY -t $CI_REGISTRY_IMAGE:tmp .
+    - docker build --build-arg HTTP_PROXY=$HTTP_PROXY --build-arg HTTPS_PROXY=$HTTPS_PROXY --build-arg NO_PROXY=$NO_PROXY -t $CI_REGISTRY_IMAGE:tmp .
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
     - docker push $CI_REGISTRY_IMAGE:tmp
   only:
