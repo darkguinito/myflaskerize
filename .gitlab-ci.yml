@@ -13,7 +13,7 @@ build:
   before_script:
     - export
   script:
-    - docker build --build-arg HTTP_PROXY=http://10.35.255.65:8080 --build-arg HTTPS_PROXY=http://10.35.255.65:10443 -t $CI_REGISTRY_IMAGE:tmp .
+    - docker build -t $CI_REGISTRY_IMAGE:tmp .
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
     - docker push $CI_REGISTRY_IMAGE:tmp
   only:
