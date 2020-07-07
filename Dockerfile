@@ -79,6 +79,4 @@ RUN chown -R app:app $APP_HOME
 # change to the app user
 USER app
 
-RUN ["chmod", "+x", "/entrypoint.sh"]
-
 ENTRYPOINT ["/entrypoint.sh", "fz"]
