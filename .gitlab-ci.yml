@@ -6,10 +6,8 @@ stages:
 
 
 build:
-  image: docker:stable
+  image: gitlab/dind:latest
   stage: package
-  services:
-    - docker:dind
   before_script:
     - export
   script:
