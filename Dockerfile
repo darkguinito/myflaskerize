@@ -36,7 +36,7 @@ COPY . /usr/src/
 
 RUN flake8 /usr/src/
 RUN pip install -e /usr/src
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/wheels -r requirement.txt
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/wheels -r /tmp/requirement.txt
 WORKDIR /work
 ENTRYPOINT ["/entrypoint.sh"]
 
@@ -68,7 +68,7 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache /wheels/*
 
 # copy entrypoint-prod.sh
-COPY --from=builder /entrypoint.sh .
+COPY --from=builder /entrypoint.sh /entrypoint.sh
 
 # copy project
 COPY . $APP_HOME
