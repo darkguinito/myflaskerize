@@ -30,9 +30,10 @@ test:
     - docker cp $DOCKER_IMAGE_BUILD_TAG_ID:/usr/app/my_app/coverage $CI_PROJECT_DIR/coverage
   when: on_success
   artifacts:
+    paths:
+      - coverage/htmlcov/*
     reports:
       junit: coverage/coverage.xml
-      html: coverage/htmlcov/*
   only:
     - master
 
@@ -48,9 +49,9 @@ doc:
     - docker rm $DOCKER_IMAGE_BUILD_TAG_ID
   when: on_success
   artifacts:
-    reports:
-      complexity: doc/complexity.png
-      diagram: doc/diagram.png
+    paths: 
+      - doc/complexity.png
+      - doc/diagram.png
 
 push:
   image: docker:stable
@@ -64,23 +65,5 @@ push:
     - docker image tag $CI_REGISTRY_IMAGE:tmp $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
     - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_REF
-  only:
-    - master
-
-deploy:
-  image:
-    name: bitnami/kubectl:latest
-    entrypoint: [""]
-  stage: deploy
-  environment: test
-  services:
-    - docker:dind
-  script:
-    - kubectl config set-cluster my-cluster --server=$KUBE_URL --certificate-authority="$KUBE_CA_PEM_FILE"
-    - kubectl config set-credentials root --token=$KUBE_TOKEN
-    - kubectl config set-context my-context --cluster=my-cluster --user=root --namespace default
-    - kubectl config use-context my-context
-    - cat k8s/deploy.tpl | sed 's/GIT_COMMIT/'"$CI_BUILD_REF/" > k8s/deploy.yml
-    - kubectl apply -f k8s
   only:
     - master
