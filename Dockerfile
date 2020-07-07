@@ -25,9 +25,10 @@ RUN /usr/local/bin/python -m pip install --upgrade pip && pip install flake8
 
 # COPY requirements.txt .
 COPY requirements.dev.txt /tmp/requirements.dev.txt
+COPY requirements.txt /tmp/requirements.txt
 
 # install python dependencies
-RUN pip install -r requirements.txt
+RUN pip install -r /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.dev.txt
 
 
@@ -62,7 +63,7 @@ WORKDIR $APP_HOME
 # install dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends netcat
 COPY --from=builder /usr/src/wheels /wheels
-COPY --from=builder /usr/src/requirements.txt .
+COPY --from=builder /tmp/requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install --no-cache /wheels/*
 
