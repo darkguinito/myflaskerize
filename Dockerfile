@@ -27,7 +27,7 @@ RUN /usr/local/bin/python -m pip install --upgrade pip && pip install flake8
 COPY requirements.dev.txt /tmp/requirements.dev.txt
 
 # install python dependencies
-# RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt
 RUN pip install -r /tmp/requirements.dev.txt
 
 
@@ -35,6 +35,7 @@ COPY . /usr/src/
 
 RUN flake8 /usr/src/
 RUN pip install -e /usr/src
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/wheels -r requirement.txt
 WORKDIR /work
 ENTRYPOINT ["/entrypoint.sh"]
 
@@ -66,7 +67,7 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache /wheels/*
 
 # copy entrypoint-prod.sh
-COPY --from=builder /usr/src/entrypoint.sh .
+COPY --from=builder /entrypoint.sh .
 
 # copy project
 COPY . $APP_HOME
@@ -77,6 +78,6 @@ RUN chown -R app:app $APP_HOME
 # change to the app user
 USER app
 
-RUN ["chmod", "+x", "/home/app/rest/entrypoint.sh"]
+RUN ["chmod", "+x", "/entrypoint.sh"]
 
-ENTRYPOINT ["/home/app/rest/entrypoint.sh", "fz"]
+ENTRYPOINT ["/entrypoint.sh", "fz"]
