@@ -1,5 +1,3 @@
-import os
-
 
 def test_schematic_from_Flaskerize(tmp_path):
     from flaskerize.parser import Flaskerize

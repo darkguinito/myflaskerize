@@ -1,5 +1,4 @@
 import os
-import argparse
 from typing import Any, Callable, Dict, List, Optional
 import fs
 from termcolor import colored
@@ -82,7 +81,6 @@ class SchematicRenderer:
 
         from pathlib import Path
 
-        patterns = self.config.get("templateFilePatterns", DEFAULT_TEMPLATE_PATTERN)
         all_files = list(str(p) for p in Path(self.schematic_files_path).glob("**/*"))
         filenames = [os.path.relpath(s, self.schematic_files_path) for s in all_files]
         filenames = list(set(filenames) - set(self.get_template_files()))
@@ -122,16 +120,17 @@ class SchematicRenderer:
         # TODO: remove the redundant parameter template file that is copied
         # outfile_name = self._get_rel_path(full_path=template_file, rel_to=root)
         outfile_name = "".join(template_file.rsplit(".template"))
+        outfile_name = "".join(outfile_name.rsplit(".tpl"))
         tpl = self.env.from_string(outfile_name)
         if context is None:
             context = {}
         return tpl.render(**context)
 
     def render_from_file(self, template_path: str, context: Dict) -> None:
-        outpath = self._generate_outfile(template_path, self.src_path, context=context)
-        outdir, outfile = os.path.split(outpath)
+        outpath          = self._generate_outfile(template_path, self.src_path, context=context)
+        outdir, outfile  = os.path.split(outpath)
         rendered_outpath = os.path.join(self.src_path, outpath)
-        rendered_outdir = os.path.join(rendered_outpath, outdir)
+        _                = os.path.join(rendered_outpath, outdir)
 
         if self.sch_fs.isfile(template_path):
             # TODO: Refactor dry-run and file system interactions to a composable object
@@ -145,17 +144,14 @@ class SchematicRenderer:
                     fout.write(tpl.render(**context))
 
     def copy_static_file(self, filename: str, context: Dict[str, Any]):
-        from shutil import copy
-
         # If the path is a directory, need to ensure trailing slash so it does not get
         # split incorrectly
         if self.sch_fs.isdir(filename):
             filename = os.path.join(filename, "")
-        outpath = self._generate_outfile(filename, self.src_path, context=context)
-        outdir, outfile = os.path.split(outpath)
-
+        outpath          = self._generate_outfile(filename, self.src_path, context=context)
+        outdir, outfile  = os.path.split(outpath)
         rendered_outpath = os.path.join(self.src_path, outpath)
-        rendered_outdir = os.path.join(rendered_outpath, outdir)
+        _                = os.path.join(rendered_outpath, outdir)
 
         if self.sch_fs.isfile(filename):
             self.copy_from_sch(filename, outpath)
@@ -219,7 +215,7 @@ Flaskerize job summary:
             run = self._load_run_function(
                 path=os.path.join(self.schematic_path, "run.py")
             )
-        except (ImportError, ValueError, FileNotFoundError) as e:
+        except (ImportError, ValueError, FileNotFoundError):
             run = default_run
         run(renderer=self, context=context)
         self.fs.commit()

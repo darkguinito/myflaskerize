@@ -162,6 +162,6 @@ def test_with_full_path(tmp_path):
         fid.write(CONTENTS)
 
     outdir = os.path.join(tmp_path, "test/")
-    fz = Flaskerize(f"fz generate {tmp_path}:doodad name --from-dir {outdir}".split())
+    _ = Flaskerize(f"fz generate {tmp_path}:doodad name --from-dir {outdir}".split())
 
     assert os.path.isfile(os.path.join(tmp_path, "test/test_file.txt"))

@@ -1,4 +1,4 @@
-from typing import Any, Callable, List, Optional
+from typing import Callable, List
 import os
 import fs
 from fs.base import FS
@@ -26,7 +26,7 @@ class StagedFileSystem:
         dry_run: bool = False,
     ):
         """
-        
+
         Args:
             src_path (str): root path of the directory to modify via staging technique
             src_fs_factory (Callable[..., FS], optional): Factory method for returning
@@ -43,7 +43,7 @@ def default_fs_factory(path: str) -> FS:
         self.src_fs = src_fs_factory(src_path or ".")
 
         # The stg_fs mirrors src_fs as an in-memory buffer of changes to be made
-        self.stg_fs = fs.open_fs(f"mem://")
+        self.stg_fs = fs.open_fs(u"mem://")
 
         # The render_fs is contained within stg_fs at the relative path `output_prefix`.
         # Rendering file system is from the frame-of-reference of the output_prefix

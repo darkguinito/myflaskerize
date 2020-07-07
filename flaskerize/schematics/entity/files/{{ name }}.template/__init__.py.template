@@ -7,3 +7,4 @@ def register_routes(root_api, root="/api"):
 
     root_api.add_namespace({{ lower(name) }}_api, path=f"{root}/{{ lower(name) }}")
     return root_api
+

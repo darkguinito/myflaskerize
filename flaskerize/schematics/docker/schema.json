@@ -1,0 +1,23 @@
+{
+  "templateFilePatterns": ["**/*.template"],
+  "ignoreFilePatterns": [],
+  "options": [
+    {
+      "arg": "--project-name",
+      "type": "str",
+      "help": "Project name"
+    },
+    {
+      "arg": "--base-image",
+      "type": "str",
+      "default": "slim",
+      "help": "Base docker image "
+    },
+    {
+      "arg": "--maintainer",
+      "type": "str",
+      "default": "TS-{{ name }}-support@thalesgroup.com",
+      "help": "Projet maintainors mail address"
+    }
+  ]
+}

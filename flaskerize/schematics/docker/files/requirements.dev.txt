@@ -1,0 +1,6 @@
+coverage
+pytest
+blinker
+mccabe
+graphviz
+pyreverse 

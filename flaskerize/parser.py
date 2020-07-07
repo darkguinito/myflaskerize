@@ -1,7 +1,6 @@
 import os
 from os import path
 import argparse
-import sys
 from typing import Any, Dict, List, Tuple, Optional
 from importlib.machinery import ModuleSpec
 
@@ -44,7 +43,6 @@ class FzArgumentParser(argparse.ArgumentParser):
         schema: Optional[str] = None,
         xtra_schema_files: Optional[List[str]] = None,
     ):
-        import json
 
         super().__init__()
         cfgs: List[Dict] = []
@@ -64,7 +62,6 @@ class Flaskerize(object):
     def __init__(self, args):
         import os
 
-        dirname = os.path.dirname(__file__)
         parser = FzArgumentParser(
             os.path.join(os.path.dirname(__file__), "global/schema.json")
         )
@@ -93,8 +90,6 @@ class Flaskerize(object):
         Generate a new Blueprint from a source static site and attach it
         to an existing Flask application
         """
-        import os
-
         from flaskerize import generate
 
         DEFAULT_BP_NAME = "_fz_bp.py"
@@ -239,10 +234,6 @@ class Flaskerize(object):
         dry_run: bool = False,
         delim: str = ":",
     ) -> None:
-        from os import path
-
-        from flaskerize import generate
-
         pkg_or_path, schematic = self._split_pkg_schematic(pkg_schematic, delim=delim)
 
         if _is_pathlike(pkg_or_path):

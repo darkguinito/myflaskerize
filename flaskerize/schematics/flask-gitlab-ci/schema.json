@@ -1,0 +1,18 @@
+{
+  "templateFilePatterns": ["**/*.template"],
+  "ignoreFilePatterns": [],
+  "options": [
+    {
+      "arg": "--http_proxy",
+      "type": "str",
+      "default": "10.35.255.65:8080",
+      "help": "Proxy http, example: 10.10.10.10:8080"
+    },
+    {
+      "arg": "--https_proxy",
+      "type": "str",
+      "default": "10.35.255.65:10443",
+      "help": "Proxy https, example: 10.10.10.10:8443"
+    }
+  ]
+}

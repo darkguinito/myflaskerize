@@ -1,0 +1,86 @@
+stages:
+- package
+- test
+- doc
+- push
+
+
+build:
+  image: docker:stable
+  stage: package
+  services:
+    - docker:dind
+  before_script:
+    - export
+  script:
+    - docker build --build-arg HTTP_PROXY=http://10.35.255.65:8080 --build-arg HTTPS_PROXY=http://10.35.255.65:10443 -t $CI_REGISTRY_IMAGE:tmp .
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker push $CI_REGISTRY_IMAGE:tmp
+  only:
+    - master
+
+test:
+  image: docker:stable
+  stage: test
+  services:
+    - docker:dind
+  script:
+    - docker run --name $DOCKER_IMAGE_BUILD_TAG_ID $CI_REGISTRY_IMAGE:tmp coverage run -m pytest 
+    - docker run --name $DOCKER_IMAGE_BUILD_TAG_ID $CI_REGISTRY_IMAGE:tmp coverage report
+    - docker cp $DOCKER_IMAGE_BUILD_TAG_ID:/usr/app/my_app/coverage $CI_PROJECT_DIR/coverage
+  when: on_success
+  artifacts:
+    reports:
+      junit: coverage/coverage.xml
+      html: coverage/htmlcov/*
+  only:
+    - master
+
+doc:
+  image: docker:stable
+  stage: doc
+  services: 
+    - docker:dind
+  script:
+    - docker run --name $DOCKER_IMAGE_BUILD_TAG_ID $CI_REGISTRY_IMAGE:tmp mccabe --min 5 --dot mccabe.py | dot -Tpng -o doc/complexity.png
+    - docker run --name $DOCKER_IMAGE_BUILD_TAG_ID $CI_REGISTRY_IMAGE:tmp pyreverse -p my_app | | dot -Tpng -o doc/diagram.png  
+    - docker cp $DOCKER_IMAGE_BUILD_TAG_ID:/usr/app/my_app/doc $CI_PROJECT_DIR/doc
+    - docker rm $DOCKER_IMAGE_BUILD_TAG_ID
+  when: on_success
+  artifacts:
+    reports:
+      complexity: doc/complexity.png
+      diagram: doc/diagram.png
+
+push:
+  image: docker:stable
+  stage: push
+  services:
+    - docker:dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker image pull $CI_REGISTRY_IMAGE:tmp
+    - docker image tag $CI_REGISTRY_IMAGE:tmp $CI_REGISTRY_IMAGE:$CI_BUILD_REF
+    - docker image tag $CI_REGISTRY_IMAGE:tmp $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_REF
+  only:
+    - master
+
+deploy:
+  image:
+    name: bitnami/kubectl:latest
+    entrypoint: [""]
+  stage: deploy
+  environment: test
+  services:
+    - docker:dind
+  script:
+    - kubectl config set-cluster my-cluster --server=$KUBE_URL --certificate-authority="$KUBE_CA_PEM_FILE"
+    - kubectl config set-credentials root --token=$KUBE_TOKEN
+    - kubectl config set-context my-context --cluster=my-cluster --user=root --namespace default
+    - kubectl config use-context my-context
+    - cat k8s/deploy.tpl | sed 's/GIT_COMMIT/'"$CI_BUILD_REF/" > k8s/deploy.yml
+    - kubectl apply -f k8s
+  only:
+    - master

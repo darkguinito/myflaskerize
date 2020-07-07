@@ -32,7 +32,6 @@ class {{ capitalize(name) }}Service:
     @staticmethod
     def create(new_attrs: {{ capitalize(name) }}Interface) -> {{ capitalize(name) }}:
         new_{{ lower(name) }} = {{ capitalize(name) }}(
-            {{ lower(name) }}_id=new_attrs["{{ lower(name) }}_id"],
             name=new_attrs["name"],
             description=new_attrs["description"],
         )

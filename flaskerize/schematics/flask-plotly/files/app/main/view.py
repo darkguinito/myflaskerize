@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template
 
 bp = Blueprint("main", __name__, template_folder="templates")
 
@@ -26,7 +26,5 @@ def make_chart(title):
 
 @bp.route("/", methods=["GET", "POST"])
 def route():
-    message = ""
     fig, layout = make_chart(title="Test title")
     return render_template("plotly-chart.html", fig=fig, layout=layout)
-

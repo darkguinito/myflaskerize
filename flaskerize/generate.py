@@ -76,7 +76,7 @@ def create_app():
     @app.route('/')
     def index():
         return send_from_directory(app.static_folder, 'index.html')
-            
+
     return app
 
 if __name__ == '__main__':
@@ -256,7 +256,6 @@ def test_get(app, client, schema):  # noqa
 
 
 def dockerfile(args):
-    import os
 
     CONTENTS = f"""FROM python:3.7 as base
 

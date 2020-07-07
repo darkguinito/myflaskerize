@@ -38,9 +38,9 @@ def test_flaskerize_attach_from_cli(tmp_path):
 
     BP_CONTENTS = """import os
     from flask import Blueprint, send_from_directory
-    
+
     site = Blueprint('site', __name__, static_folder='test/build/')
-    
+
     # Serve static site
     @site.route('/')
     def index():
@@ -146,7 +146,7 @@ def test_attach_without_dry_run_raises_if_file_does_not_exist(tmp_path):
         bp: str = "_fz_bp.py"
         dry_run: bool = False
 
-    outfile = path.join(tmp_path, "outfile.py")
+    _ = path.join(tmp_path, "outfile.py")
     attach.split_file_factory = MagicMock(return_value=(app_file, "create_app"))
     attach.attach(Args())
 
@@ -182,7 +182,7 @@ def test_attach_raises_with_no_target_function_call(tmp_path):
         bp: str = "_fz_bp.py"
         dry_run: bool = False
 
-    outfile = path.join(tmp_path, "outfile.py")
+    _ = path.join(tmp_path, "outfile.py")
     attach.split_file_factory = MagicMock(return_value=(app_file, "create_app"))
     with pytest.raises(SyntaxError):
         attach.attach(Args())
@@ -218,7 +218,7 @@ def test_attach_raises_with_no_Flask_call(tmp_path):
         bp: str = "_fz_bp.py"
         dry_run: bool = False
 
-    outfile = path.join(tmp_path, "outfile.py")
+    _ = path.join(tmp_path, "outfile.py")
     attach.split_file_factory = MagicMock(return_value=(app_file, "create_app"))
     with pytest.raises(SyntaxError):
         attach.attach(Args())

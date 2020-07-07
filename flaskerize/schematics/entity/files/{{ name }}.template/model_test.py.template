@@ -19,3 +19,4 @@ def test_{{ capitalize(name) }}_retrieve({{ lower(name) }}: {{ capitalize(name) 
     db.session.commit()
     s = {{ capitalize(name) }}.query.first()
     assert s.__dict__ == {{ lower(name) }}.__dict__
+

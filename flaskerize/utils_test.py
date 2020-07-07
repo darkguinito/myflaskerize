@@ -76,4 +76,3 @@ def test_split_file_factory_raises_on_invalid_packages(tmp_path):
 def test_a():
     with pytest.raises(ValueError):
         utils.split_file_factory("oops:this:is:wrong:syntax!")
-

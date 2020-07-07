@@ -16,7 +16,7 @@ api = Namespace("{{ capitalize(name) }}", description="{{ capitalize(name) }} in
 class {{ capitalize(name) }}Resource(Resource):
     """{{ capitalize(name) }}s"""
 
-    @responds(schema={{ capitalize(name) }}Schema, many=True)
+    @responds(schema={{ capitalize(name) }}Schema(many=True))
     def get(self) -> List[{{ capitalize(name) }}]:
         """Get all {{ capitalize(name) }}s"""
 
@@ -55,3 +55,4 @@ class {{ capitalize(name) }}IdResource(Resource):
         changes = request.parsed_obj
         {{ lower(name) }} = {{ capitalize(name) }}Service.get_by_id({{ lower(name) }}Id)
         return {{ capitalize(name) }}Service.update({{ lower(name) }}, changes)
+

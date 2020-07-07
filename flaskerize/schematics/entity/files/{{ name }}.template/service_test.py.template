@@ -6,6 +6,17 @@ from .model import {{ capitalize(name) }}
 from .service import {{ capitalize(name) }}Service  # noqa
 from .interface import {{ capitalize(name) }}Interface
 
+def test_get_by_id(db: SQLAlchemy):  # noqa
+    yin: {{ capitalize(name) }} = {{ capitalize(name) }}({{ lower(name) }}_id=1, name="Yin", description="Test description")
+    db.session.add(yin)
+    db.session.commit()
+
+    results: {{ capitalize(name) }} = {{ capitalize(name) }}Service.get_by_id(1)
+
+    assert results.{{ lower(name) }}_id == yin.{{ lower(name) }}_id
+    assert results.name          == yin.name
+    assert results.description   == yin.description
+
 
 def test_get_all(db: SQLAlchemy):  # noqa
     yin: {{ capitalize(name) }} = {{ capitalize(name) }}({{ lower(name) }}_id=1, name="Yin", description="Test description")
@@ -25,7 +36,7 @@ def test_update(db: SQLAlchemy):  # noqa
 
     db.session.add(yin)
     db.session.commit()
-    updates = dict({{ lower(name) }}="Yang")
+    updates = dict(name="Yang")
 
     {{ capitalize(name) }}Service.update(yin, updates)
 
@@ -40,11 +51,16 @@ def test_delete_by_id(db: SQLAlchemy):  # noqa
     db.session.add(yang)
     db.session.commit()
 
-    {{ capitalize(name) }}Service.delete_by_id(1)
+    deleted_results: List[int] = {{ capitalize(name) }}Service.delete_by_id(1)
     results: List[{{ capitalize(name) }}] = {{ capitalize(name) }}.query.all()
 
     assert len(results) == 1
+    assert len(deleted_results) == 1
     assert yin not in results and yang in results
+    assert deleted_results[0] == 1
+
+    deleted_results: List[int] = {{ capitalize(name) }}Service.delete_by_id(1)
+    assert len(deleted_results) == 0
 
 
 def test_create(db: SQLAlchemy):  # noqa
@@ -59,3 +75,4 @@ def test_create(db: SQLAlchemy):  # noqa
 
     for k in yin.keys():
         assert getattr(results[0], k) == yin[k]
+

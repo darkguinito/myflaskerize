@@ -23,4 +23,3 @@ class ProductionConfig:
 
 
 config_by_name = dict(dev=DevelopmentConfig, test=TestingConfig, prod=ProductionConfig)
-

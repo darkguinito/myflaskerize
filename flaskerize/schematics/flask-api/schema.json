@@ -1,5 +1,5 @@
 {
-  "templateFilePatterns": ["**/*.template"],
+  "templateFilePatterns": ["**/*.template", "**/*.tpl"],
   "ignoreFilePatterns": [],
   "options": []
 }

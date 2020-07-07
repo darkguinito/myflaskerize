@@ -1,0 +1,77 @@
+# pull official base image
+FROM python:{{ base_image }} as builder
+
+# set work directory
+WORKDIR /usr/src
+
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# install system dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gcc net-tools curl netcat
+
+# lint
+RUN pip install --upgrade pip
+RUN pip install flake8
+
+COPY requirements.dev.txt .
+COPY requirements.txt .
+
+# install python dependencies
+RUN pip install -r requirements.txt
+RUN pip install -r requirements.dev.txt
+
+COPY . /usr/src/
+RUN flake8
+RUN pip install -e {{ project_name}}/
+
+RUN chmod +x entrypoint.sh
+
+ENTRYPOINT ["/usr/src/entrypoint.sh"]
+
+
+#########
+# FINAL #
+#########
+
+# pull official base image
+FROM python:{{ base_image }} as flask_prod
+
+# create directory for the app user
+RUN mkdir -p /home/app
+
+# create the app user
+RUN addgroup --system {{ project_name }} && adduser --system --group {{ project_name }}
+
+
+# create the appropriate directories
+ENV HOME=/home/app
+ENV APP_HOME=/home/app/{{ project_name }}
+RUN mkdir $APP_HOME
+WORKDIR $APP_HOME
+
+# install dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends netcat
+COPY --from=builder /usr/src/wheels /wheels
+COPY --from=builder /usr/src/requirements.txt .
+RUN pip install --upgrade pip
+RUN pip install --no-cache /wheels/*
+
+# copy entrypoint-prod.sh
+COPY --from=builder /usr/src/entrypoint.sh .
+
+# copy project
+COPY . $APP_HOME
+
+# chown all the files to the app user
+RUN chown -R {{ project_name }}:{{ project_name }} $APP_HOME
+
+# change to the app user
+USER {{ project_name }}
+
+MAINTAINER {{ maintainer }}
+RUN ["chmod", "+x", "/home/app/{{ name }}/entrypoint.sh"]
+
+ENTRYPOINT ["/home/app/{{ name }}/entrypoint.sh", "fz"]

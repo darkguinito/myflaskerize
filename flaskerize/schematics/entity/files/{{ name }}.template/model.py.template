@@ -1,6 +1,5 @@
 from sqlalchemy import Integer, Column, String
 from app import db  # noqa
-from .interface import {{ capitalize(name) }}Interface
 
 
 class {{ capitalize(name) }}(db.Model):
@@ -15,3 +14,4 @@ class {{ capitalize(name) }}(db.Model):
         for key, val in changes.items():
             setattr(self, key, val)
         return
+

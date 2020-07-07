@@ -2,7 +2,6 @@ from pytest import fixture, raises
 import os
 from os import path
 from unittest.mock import patch, MagicMock
-from typing import Callable
 
 from .render import SchematicRenderer
 

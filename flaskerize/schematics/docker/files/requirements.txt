@@ -1,0 +1,14 @@
+Flask
+flask-accepts
+flask-restx
+Flask-Script
+Flask-SQLAlchemy
+Jinja2
+marshmallow
+mypy-extensions
+numpy
+pandas
+python-dateutil
+six
+SQLAlchemy
+Werkzeug

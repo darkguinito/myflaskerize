@@ -1,4 +1,4 @@
-from typing import List, Callable, Any
+from typing import List, Callable
 
 
 def make_register_custom_function() -> Callable:

@@ -1,9 +1,9 @@
 import os
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 import pytest
 
 from flaskerize.exceptions import InvalidSchema
-from flaskerize.parser import FzArgumentParser, Flaskerize
+from flaskerize.parser import Flaskerize
 
 
 @pytest.fixture
@@ -29,13 +29,13 @@ def test_flaskerize_generate():
 @patch.dict("flaskerize.generate.a", {"blueprint": lambda params: None})
 def test_bundle_calls_attach(tmp_path):
     with patch("flaskerize.attach.attach") as mock:
-        fz = Flaskerize("fz bundle --from test/build/ --to app:create_app".split())
+        _ = Flaskerize("fz bundle --from test/build/ --to app:create_app".split())
         mock.assert_called_once()
 
 
 def test_bundle_calls_does_not_call_attach_w_dry_run(tmp_path):
     with patch.object(Flaskerize, "attach") as mock:
-        fz = Flaskerize(
+        _ = Flaskerize(
             "fz bundle --from test/build/ --to app:create_app --dry-run".split()
         )
 
@@ -97,7 +97,7 @@ def test__load_schema(tmp_path):
     with open(schema_filename, "w") as fid:
         fid.write(CONTENTS)
     with pytest.raises(InvalidSchema):
-        cfg = _load_schema(schema_filename)
+        _ = _load_schema(schema_filename)
 
 
 def test_schema(tmp_path):
@@ -163,7 +163,6 @@ def test_bundle(tmp_path):
 
 
 def test__check_validate_package(test_flaskerize_args, tmp_path):
-    tmp_app_path = os.path.join(tmp_path, "test.py")
     fz = Flaskerize(test_flaskerize_args)
 
     with pytest.raises(ModuleNotFoundError):
@@ -205,13 +204,11 @@ def test__check_get_schematic_path(test_flaskerize_args, tmp_path):
 
 def test__split_pkg_schematic(test_flaskerize_args, tmp_path):
     with pytest.raises(ValueError):
-        tmp_app_path = os.path.join(tmp_path, "test.py")
         fz = Flaskerize(test_flaskerize_args)
         pkg, schematic = fz._split_pkg_schematic(":schematic")
 
 
 def test__split_pkg_schematic_works_with_pkg(test_flaskerize_args, tmp_path):
-    tmp_app_path = os.path.join(tmp_path, "test.py")
     fz = Flaskerize(test_flaskerize_args)
     pkg, schematic = fz._split_pkg_schematic("my_pkg:schematic")
     assert pkg == "my_pkg"
@@ -219,7 +216,6 @@ def test__split_pkg_schematic_works_with_pkg(test_flaskerize_args, tmp_path):
 
 
 def test__split_pkg_schematic_works_with_full_path(test_flaskerize_args, tmp_path):
-    tmp_app_path = os.path.join(tmp_path, "test.py")
     fz = Flaskerize(test_flaskerize_args)
     pkg, schematic = fz._split_pkg_schematic("path/to/schematic:schematic")
     assert pkg == "path/to/schematic"
@@ -227,7 +223,6 @@ def test__split_pkg_schematic_works_with_full_path(test_flaskerize_args, tmp_pat
 
 
 def test__split_pkg_schematic_only_grabs_last_delim(test_flaskerize_args, tmp_path):
-    tmp_app_path = os.path.join(tmp_path, "test.py")
     fz = Flaskerize(test_flaskerize_args)
     pkg, schematic = fz._split_pkg_schematic("path/to/:my:/schematic:schematic")
     assert pkg == "path/to/:my:/schematic"
