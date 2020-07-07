@@ -36,7 +36,7 @@ COPY . /usr/src/
 
 RUN flake8 /usr/src/
 RUN pip install -e /usr/src
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/wheels -r /tmp/requirement.txt
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/wheels -r /tmp/requirements.txt
 WORKDIR /work
 ENTRYPOINT ["/entrypoint.sh"]
 
